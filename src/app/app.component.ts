@@ -32,7 +32,6 @@ export class AppComponent implements OnInit {
   }
 
   export(name, title, description) {
-    chrome.storage.local.remove('token');
     var apiData = {
       urls: this.urlCollection,
       collection_title: title,
@@ -48,16 +47,11 @@ export class AppComponent implements OnInit {
             chrome.tabs.executeScript(
               tab.id, {
               code: `
-              if (window.location.origin === 'https://app.urlll.xyz') {
-                chrome.storage.local.set({
-                  token: localStorage.getItem('x-access-token')
+              chrome.storage.local.set({
+                token: localStorage.getItem('x-access-token')
               }, function () {
               });
-              } else {
-                alert('please go to https://urlll.xyz and proceed with extension');
-                window.location.href = "https://urlll.xyz";
-              }
-                `},
+              `},
               function (results) {
                 chrome.storage.local.get('token', function (items) {
                   var a = JSON.stringify(items);
@@ -71,7 +65,6 @@ export class AppComponent implements OnInit {
                     body: JSON.stringify(apiData)
                   }).then(res => res.json())
                     .then(res => alert(res.msg));
-                  chrome.storage.local.remove('token');
                 });
               }
             );
